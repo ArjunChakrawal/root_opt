@@ -99,10 +99,10 @@ set(ax(1:3), 'Xticklabel',[])
 set(ax(5:7), 'Xticklabel',[])
 
 xlabel(ax(4),'time [day]');
-ylabel(ax(1),'{\itG_{L}/A_{net}} [-]')
-ylabel(ax(2),'{\itS/A_{net}} [-]')
-ylabel(ax(3),'{\itG_{R}/S} [-]')
-ylabel(ax(4),'{\itE/S} [-]')
+ylabel(ax(1),'{\itG_{L} / A_{net}} [-]')
+ylabel(ax(2),'{\itS / A_{net}} [-]')
+ylabel(ax(3),'{\itG_{R} / S} [-]')
+ylabel(ax(4),'{\itE / S} [-]')
 
 ylabel(ax(5),'\int{\it G_{L}} [gC m^{-2}]')
 ylabel(ax(6),'\int{\it S} [gC m^{-2}]')
@@ -118,7 +118,7 @@ for i =1:length(ax)
     set(ax(i), 'LineWidth', 0.5, 'FontSize',13, 'Box','on')
     ax(i).YLabel.FontSize=16;
     ax(i).XLabel.FontSize=16;
-    grid(ax(i),'off');
+    grid(ax(i),'on');
     ttl = title(ax(i),"("+strs(i)+")",'FontWeight','normal');
     ttl.Units = 'Normalize';
     ttl.FontSize=16;
@@ -132,6 +132,106 @@ t.Padding='compact';
 exportgraphics(gcf, "figs/Figure2.png", Resolution=600)
 print(gcf, 'figs/Figure2.svg', '-dsvg');
 
+%%
+
+fig = figure;fig.Position=[224   100   1000   800];
+fig.Color='w';
+t=tiledlayout(3,3);
+ax(1) = nexttile([1,2]);
+ax(2) = nexttile([1,2]);
+ax(3) = nexttile([1,2]);
+ax(4) = nexttile();
+ax(5) = nexttile();
+ax(6) = nexttile();
+for i=1:6
+    hold(ax(i),'on');
+end
+color=copper(3);
+
+yvar = ["rootCSupply","root_growth_rate","root_exu"];
+
+
+temp=[];
+j=1
+for i=1:3
+    df = df_t(strcmp(df_t.scenario,scenario(i)), :);
+    temp =[temp,trapz(df.time, df{:,yvar(j)})/trapz(df.time, df{:,'Anet'})];
+end
+b=bar(ax(3+j), categorical(scenario), temp);
+b.FaceColor = 'flat';
+b.CData = color;
+b.FaceAlpha=0.75;
+b.EdgeColor="flat";
+
+
+for j=2:3
+    temp=[];
+    for i=1:3
+        df = df_t(strcmp(df_t.scenario,scenario(i)), :);
+        temp =[temp,trapz(df.time, df{:,yvar(j)})/trapz(df.time, df{:,'rootCSupply'})];
+    end
+    b=bar(ax(3+j), categorical(scenario), temp);
+    b.FaceColor = 'flat';
+    b.CData = color;
+    b.FaceAlpha=0.75;
+    b.EdgeColor="flat";
+end
+
+scenario = string(ax(6).XTickLabel);
+
+lstyle = ["-","-","-"];
+lw = [1,1,1]*2;
+
+for i =1:3
+    df = df_t(strcmp(df_t.scenario,scenario(i)), :);
+    stairs(ax(1), df.time, df.rootCSupply./df.Anet, 'linewidth', lw(i), ...
+        'LineStyle',lstyle(i),  "Color",color(i,:),'DisplayName', '\itS/A_{net}');
+    stairs(ax(2),df.time, df.root_growth_rate./df.rootCSupply, 'linewidth', lw(i), ...
+        'LineStyle',lstyle(i),  "Color",color(i,:),'DisplayName', '\itG_{R}/S');
+    stairs(ax(3),df.time, df.root_exu./df.rootCSupply, 'linewidth', lw(i), ...
+        'LineStyle',lstyle(i),  "Color",color(i,:),'DisplayName', '\itE/S');
+end
+
+set(ax(1), 'Ylim',[0, 0.9])
+set(ax(2), 'Ylim',[0, 0.6]);
+set(ax(3), 'Ylim',[0, 0.3])
+set(ax(5:6), 'Ylim',[0, 0.4])
+% set(ax(7:8), 'Ylim',[0, 250])
+
+set(ax(1:2), 'Xticklabel',[])
+set(ax(4:5), 'Xticklabel',[])
+
+xlabel(ax(3),'time [day]');
+ylabel(ax(1),'{\itS / A_{net}} [-]')
+ylabel(ax(2),'{\itG_{R} / S} [-]')
+ylabel(ax(3),'{\itE / S} [-]')
+
+ylabel(ax(4),'\int{\it S} / \int{\it A_{net}} [-]')
+ylabel(ax(5),'\int{\it G_{R}} / \int{\it S} [-]')
+ylabel(ax(6),'\int{\it E} / \int{\it S} [-]')
+% lh=legend(ax(4), scenario);
+% lh.Title.String="Model scenarios";lh.Location="northeast";
+% lh.FontSize=12;lh.NumColumns=3;lh.Box='on';
+
+
+strs=["A","C","E","B","D","F"];
+for i =1:length(ax)
+    set(ax(i), 'LineWidth', 0.5, 'FontSize',13, 'Box','on')
+    ax(i).YLabel.FontSize=16;
+    ax(i).XLabel.FontSize=16;
+    grid(ax(i),'on');
+    ttl = title(ax(i),"("+strs(i)+")",'FontWeight','normal');
+    ttl.Units = 'Normalize';
+    ttl.FontSize=16;
+    ttl.Position(1) = 0; % use negative values (ie, -0.1) to move further left
+    ttl.HorizontalAlignment = 'left';
+end
+ax(6).XAxis.FontSize=14;
+
+t.TileSpacing='loose';
+t.Padding='compact';
+exportgraphics(gcf, "figs/Figure2.png", Resolution=600)
+print(gcf, 'figs/Figure2.svg', '-dsvg');
 
 %% Figure2_SI 
 fig = figure;fig.Position=[224   100   900   900];

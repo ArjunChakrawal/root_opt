@@ -13,7 +13,7 @@ CNSOM = (5:2.5:30)';
 numtstep=50;
 Vmax_IN_to_root = [3.7/15,3.7/5];
 [params, state_init]=params_base_condition();
-
+%%
 for k =1:length(Vmax_IN_to_root)
     for j= 1:length(init_inorgN)
         for i=1:length(CNSOM)
@@ -38,7 +38,7 @@ save('df_soilCN_inorgN_Vmax_IN_to_root.mat', 'df_soilCN_inorgN_Vmax_IN_to_root')
 %%
 load('df_soilCN_inorgN_Vmax_IN_to_root.mat')
 
-title_font=12;
+title_font=13;
 fig=figure;fig.Color='w';
 fig.Position=[40,60,800,650];
 [ax, ~] = tight_subplot(2,2, [.075 .1],[.1 .075],[0.1 .02]);
@@ -55,31 +55,31 @@ title(ax(4),"(D) High min. N",'FontWeight','normal',FontSize=title_font);
 text(ax(2),-0.15, 0.25+0.4, 'or \int{\itG_{R}} / \int{\itS}', 'Units', 'normalized', ...
     'Color', root_col, 'HorizontalAlignment', 'center', ...
     'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
-text(ax(2), -0.15, 0.25, '{\it\intE/\intS} [-]', 'Units', 'normalized', ...
+text(ax(2), -0.15, 0.25, '{\it\intE / \intS} [-]', 'Units', 'normalized', ...
     'Color', exuflux_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
 
 text(ax(4),-0.15, 0.25+0.4, 'or \int{\itG_{R}} / \int{\itS}', 'Units', 'normalized', ...
     'Color', root_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
-text(ax(4), -0.15, 0.25, '{\it\intE/\intS} [-]', 'Units', 'normalized', ...
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
+text(ax(4), -0.15, 0.25, '{\it\intE / \intS} [-]', 'Units', 'normalized', ...
     'Color', exuflux_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
 
 
 text(ax(1),-0.15, 0.25+0.5, 'or \int{\itS} / \int{\itA_{net}}', 'Units', 'normalized', ...
     'Color', supply_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
-text(ax(1), -0.15, 0.25, '{\it\intG_{L}/\intA_{net}} [-]', 'Units', 'normalized', ...
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
+text(ax(1), -0.15, 0.25, '{\it\intG_{L} / \intA_{net}} [-]', 'Units', 'normalized', ...
     'Color', leaf_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
 
 text(ax(3),-0.15, 0.25+0.5, 'or \int{\itS} / \int{\itA_{net}}', 'Units', 'normalized', ...
     'Color', supply_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
-text(ax(3), -0.15, 0.25, '{\it\intG_{L}/\intA_{net}} [-]', 'Units', 'normalized', ...
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
+text(ax(3), -0.15, 0.25, '{\it\intG_{L} / \intA_{net}} [-]', 'Units', 'normalized', ...
     'Color', leaf_col, 'HorizontalAlignment', 'center', ...
-    'VerticalAlignment', 'middle', Rotation=90, FontSize=14);
+    'VerticalAlignment', 'middle', Rotation=90, FontSize=title_font);
 
 final_tbl=table();
 w=1;
@@ -147,7 +147,7 @@ for jj = 1:2
 end
 hl = legend(ax2, p,  {'low root N uptake','high root N uptake'});
 hl.FontSize = 11;hl.Location="southwest";
-hl.Box = 'on';h1.Title.String="line color";
+hl.Box = 'off';h1.Title.String="line color";
 hl.Color='w';hl.LineWidth=0.5;
 ax2.Visible = 'off';
 
