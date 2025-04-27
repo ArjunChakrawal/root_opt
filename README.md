@@ -26,6 +26,7 @@ Plants must trade off C allocation between leaves, roots, and root exudates to f
         ├── Figure4.png
         └── Figure5.png
     ├── .gitattributes 
+    ├── casadi-windows-matlabR2016a-v3.5.5.zip
     ├── df_soilCN_inorgN_leafCN.mat 
     ├── df_soilCN_inorgN_Vmax_IN_to_root.mat 
     ├── df_soilCN_inorgN_Vmax_SOM.mat 
@@ -38,16 +39,46 @@ Plants must trade off C allocation between leaves, roots, and root exudates to f
     ├── params_base_condition.m
     ├── plotting.m 
     ├── README.md 
-    └── solve_ocp.m
+    ├── solve_ocp.m
+    ├── start_setup.m
+    ├── test_yop.m
+    └── yop-master.zip
+    
 ```
 ---
+##  Getting Started
 
-## 🧪 Requirements
-- MATLAB 2022
+### 🧪 Requirements
+
+Before getting started with root_opt, ensure your runtime environment meets the following requirements:
+- **Programming Language:** MATLAB 2022
 - [Yoptimization](https://www.yoptimization.com/)
 - [casadi-windows-matlabR2016a-v3.5.5 version](https://github.com/casadi/casadi/releases/download/3.5.5/casadi-windows-matlabR2016a-v3.5.5.zip)
 
 For detailed installation guidelines and examples, please visit [Yoptimization](https://www.yoptimization.com/). To ensure the reproducibility of our work, we have archived the specific Yoptimization version used in our repository. It's important to note that another necessary component for Yoptimization is CasADi; specifically, we utilized the [casadi-windows-matlabR2016a-v3.5.5 version](https://github.com/casadi/casadi/releases/download/3.5.5/casadi-windows-matlabR2016a-v3.5.5.zip).
+
+
+
+### Setup Instructions
+
+Follow the steps below to set up the repository and generate the figures used in the manuscript:
+
+### 1. Download the repository
+Download the repository as a ZIP file.
+
+### 2. Extract the ZIP file
+Once downloaded, extract the ZIP file to a directory of your choice.
+
+### 3. Open MATLAB and navigate to the project directory:
+In MATLAB, change the current working directory to the extracted folder. You can do this by using the `cd` command in MATLAB:
+```matlab
+>> cd('path_to_extracted_folder');
+```
+### 4.  Run the start_setup.m script:
+In the MATLAB command window, run the `start_setup.m` script by typing:
+```matlab
+>> start_setup
+```
 
 ---
 
