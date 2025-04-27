@@ -8,6 +8,7 @@ df_soilCN_inorgN_Vmax_SOM= struct();
 init_inorgN = [10, 20];
 CNSOM = [5,10,15,20,25,30]';CNSOM = (5:2.5:30)';
 
+
 Vmax_SOM =[0.15,0.3];
 numtstep=50;
 %%
@@ -88,7 +89,7 @@ axgrid= [ax(1),ax(2);ax(3),ax(4)];
 final_tbl=table();
 w=1;
 numstr =["(A)","(B)","(C)","(D)"];
-ls = ["--","-"];msw=6;lw=1.5;title_font=14;
+ls = ["--","-"];msw=1;lw=2.0;title_font=14;
 
 for j= 1:length(init_inorgN)
     for k =1:length(Vmax_SOM)
@@ -113,14 +114,14 @@ for j= 1:length(init_inorgN)
 
         final_tbl=[final_tbl;tbl];
 
-        plot(axgrid(j,1),tbl.CNSOM, tbl.S_by_Anet,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=supply_col);
-        plot(axgrid(j,1),tbl.CNSOM, tbl.Gleaf_by_Anet,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=leaf_col);
-        plot(axgrid(j,2),tbl.CNSOM, tbl.Gr_S,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=root_col);
-        plot(axgrid(j,2),tbl.CNSOM, tbl.E_S,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=exuflux_col);
+        plot(axgrid(j,1),tbl.CNSOM, tbl.S_by_Anet,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=supply_col);
+        plot(axgrid(j,1),tbl.CNSOM, tbl.Gleaf_by_Anet,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=leaf_col);
+        plot(axgrid(j,2),tbl.CNSOM, tbl.Gr_S,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=root_col);
+        plot(axgrid(j,2),tbl.CNSOM, tbl.E_S,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=exuflux_col);
     end
 end
 
@@ -135,7 +136,7 @@ for jj = 1:2
     p(jj) = plot(ax2, nan, nan, ls{jj}, 'LineWidth', 2, 'Color','k');
     hold(ax2, 'on')
 end
-hl = legend(ax2, p,  {'slow microbes','fast microbes'});
+hl = legend(ax2, p,  {'slow SOM decomposition','fast SOM decomposition'});
 hl.FontSize = 11;hl.Location="southwest";
 hl.Box = 'off';h1.Title.String="line color";
 hl.Color='w';hl.LineWidth=0.5;

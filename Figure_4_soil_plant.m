@@ -83,7 +83,7 @@ text(ax(3), -0.15, 0.25, '{\it\intG_{L} / \intA_{net}} [-]', 'Units', 'normalize
 final_tbl=table();
 w=1;
 numstr =["(A)","(B)","(C)","(D)"];
-ls = ["--","-"];msw=6;lw=1.5;
+ls = ["--","-"];msw=3;lw=2;
 
 axgrid= [ax(1),ax(2);ax(3),ax(4)];
 for i=1:2
@@ -116,22 +116,14 @@ for j= 1:length(init_inorgN)
 
         final_tbl=[final_tbl;tbl];
 
-        plot(axgrid(j,1),tbl.CNSOM, tbl.S_by_Anet,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=supply_col);
-        plot(axgrid(j,1),tbl.CNSOM, tbl.Gleaf_by_Anet,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=leaf_col);
-        %             plot(ax(1),tbl.CNSOM, tbl.Groot_by_Anet,LineStyle=ls(k),Marker='o', ...
-        %                 MarkerSize=msw, LineWidth=1.75, Color=root_col);
-        %             plot(ax(1),tbl.CNSOM, tbl.exu_by_Anet,LineStyle=ls(k),Marker='o', ...
-        %                 MarkerSize=msw, LineWidth=1.75, Color=exuflux_col);
-
-        plot(axgrid(j,2),tbl.CNSOM, tbl.Gr_S,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=root_col);
-        plot(axgrid(j,2),tbl.CNSOM, tbl.E_S,LineStyle=ls(k),Marker='o', ...
-            MarkerSize=msw, LineWidth=1.75, Color=exuflux_col);
-
-        %             tsrt = numstr(w)+" "+CNleaf_Str(k)+" and "+init_inorgN_Str(j)
-        %             title(ax(w),tsrt,'FontWeight','normal',FontSize=title_font);
+        plot(axgrid(j,1),tbl.CNSOM, tbl.S_by_Anet,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=supply_col);
+        plot(axgrid(j,1),tbl.CNSOM, tbl.Gleaf_by_Anet,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=leaf_col);
+        plot(axgrid(j,2),tbl.CNSOM, tbl.Gr_S,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=root_col);
+        plot(axgrid(j,2),tbl.CNSOM, tbl.E_S,LineStyle=ls(k), ...
+            MarkerSize=msw, LineWidth=lw, Color=exuflux_col);
     end
 end
 
