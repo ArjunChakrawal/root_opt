@@ -1,7 +1,5 @@
 # Optimality-Based Plant C-N Allocation Model
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10481394.svg)](https://doi.org/10.5281/zenodo.10481394) Change this badge
-[![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?style=for-the-badge&logo=Bluesky&logoColor=white&label=Follow%20@ArjunChakrawal)](https://t.co/qixbogmjmO)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.971859751.svg)](https://doi.org/10.5281/zenodo.15367433)
 
 This repository contains the codebase for simulating and visualizing plant responses to nitrogen (N) limitation via dynamic carbon (C) allocation strategies in plant–soil–microbe systems. The model supports the manuscript "Modelling the acclimative value of root growth and exudation to low soil nitrogen" by  Chakrawal et al., 2025.
 
@@ -91,10 +89,16 @@ This code is shared under the [MIT License](LICENSE). For academic or commercial
 
 ```bibtex
 @article{YourLastName2025,
-  title = {Modelling the acclimative value of root growth and exudation to low soil nitrogen},
-  author = {YourLastName, FirstName and Others},
+  title = {Modelling belowground plant acclimation to low soil nitrogen – An eco-evolutionary approach},
+  author = {Arjun Chakrawal, Sacha J. Mooney, and Tino Colombi},
   journal = {Journal Name},
   year = {2025},
   doi = {DOI}
 }
 ```
+---
+## 📫 Contact
+
+**Arjun Chakrawal** arjun.chakrawal@pnnl.gov
+
+[![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?style=for-the-badge&logo=Bluesky&logoColor=white&label=%20@ArjunChakrawal)](https://t.co/qixbogmjmO)  
