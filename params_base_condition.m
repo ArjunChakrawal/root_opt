@@ -3,7 +3,9 @@ params = struct();
 params.R70 = 0.7; % fraction of total root in top 30 cm of soil
 params.a = 600 / 365; % maximum nitrogen productivity gC/gN.day
 params.b = 0.001; % the factor that decreases P_N = (a - bC_P)
-params.KNL = 75; % max leaf N
+
+%[Revision] Remove the logistic term. I made this value very large that effectively removes its effect
+params.KNL = 75e8; % max leaf N
 params.Vmax_rootCsupply = 1.5;% Root C supply rate constant gC leaf/gC root.d
 
 % params.Vmax_exu_production = 0.0044*4 ; % maxmimum exudation rate constant d-1
@@ -38,6 +40,7 @@ params.r_m = 0.005; % root maintenance respiration rate constant [0.001-0.01] (e
 params.min_frac_leaf_growth = 0.2;
 params.min_frac_root_growth = 0.2;
 params.min_exudation =0.1;
+params.max_exudation = 0.5;
 % simulation parameters
 % Define the parameters
 init_root_shoot = 1.5; % range [0.3-1.8]

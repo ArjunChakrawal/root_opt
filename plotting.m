@@ -211,3 +211,138 @@ for i=1:8
     title(const.("C"+num2str(i)), 'Interpreter','none')
     xlabel('time')
 end
+
+
+% Plot
+df.max_allowed_E_plus_Rmaint = 0.48 * df.rootCSupply;
+df.actual_E_plus_Rmaint = df.root_exu + df.root_maintenance_resp;
+df.constraint_violated = df.actual_E_plus_Rmaint > df.max_allowed_E_plus_Rmaint;
+
+figure;
+plot(df.time, df.max_allowed_E_plus_Rmaint, 'r--', 'LineWidth', 2); hold on;
+plot(df.time, df.actual_E_plus_Rmaint, 'b-', 'LineWidth', 2);
+plot(df.time, df.root_maintenance_resp, 'g:', 'LineWidth', 1.5);
+legend('Max allowed (0.4*S)', 'Actual (E+R_{maint})', 'R_{maint} alone');
+ylabel('gC m^{-2} d^{-1}');
+xlabel('Time [day]');
+title('Check if Maintenance + Exudation Exceeds Limit');
+
+
+
+% After running base scenario
+figure;
+subplot(3,1,1);
+plot(df.time, df.micC, 'LineWidth', 2);
+ylabel('Microbial C [gC/m²]');
+title('Is microbial pool building up early?');
+
+subplot(3,1,2);
+plot(df.time, df.Nmin, 'LineWidth', 2); hold on;
+plot(df.time, df.Imm, 'LineWidth', 2);
+legend('N mineralization', 'N immobilization');
+ylabel('N flux [gN/m²/d]');
+title('Is early exudation generating future mineralization?');
+
+subplot(3,1,3);
+plot(df.time, df.rootN_uptake_norm, 'LineWidth', 2);
+ylabel('rootN_uptake_norm');
+xlabel('Time [day]');
+title('When does N limitation actually hit?');
+
+% Check when rootN_uptake_norm first hits 1.0
+idx_N_lim = find(df.rootN_uptake_norm > 0.99, 1);
+fprintf('N limitation activates at t = %.1f days\n', df.time(idx_N_lim));
+
+% Compare to when S/Anet increases
+idx_S_increase = find(df.rootCSupply./df.Anet > 0.25, 1); % Threshold above minimum
+fprintf('S/Anet increases above minimum at t = %.1f days\n', df.time(idx_S_increase));
+
+
+
+% Compare scenarios with/without early exudation
+figure;
+subplot(2,1,1);
+plot(df.time, df.root_exu, 'LineWidth', 2);
+ylabel('E [gC/m²/d]');
+
+subplot(2,1,2);
+% plot(df.time, cumsum(df.phiN .* [diff(df.time); 0]), 'LineWidth', 2);
+plot(df.time, df.phiN, LineWidth= 2, DisplayName='Net mineralization rate');hold on;
+plot(df.time, df.Nmin, LineWidth=2, DisplayName='N mineralization'); 
+plot(df.time, df.Imm, LineWidth=2, DisplayName='N immobilization');
+ylabel('N mineralization [gN/m²/d]');
+legend('Location', 'best');
+% ylabel('Cumulative N mineralized [gN/m²]');
+xlabel('Time [day]');
+title('Does early exudation actually increase total N mineralization?');
+
+
+figure
+plot(df.root_exu,df.phiN ,'.' )
+xlabel('root exudation [gC m^{-2} d^{-1}]')
+ylabel('N mineralization [gN m^{-2} d^{-1}]')
+
+
+
+
+%% Check root C budget balance
+df.root_C_available = df.Net_rootC_assimilation;  % After construction respiration
+df.root_C_used = df.root_growth_rate + df.root_exu + df.root_maintenance_resp;
+df.root_C_balance = df.root_C_available - df.root_C_used;
+
+% Should be ~0 (within numerical tolerance)
+fprintf('Root C budget check:\n');
+fprintf('  Mean balance: %.6f gC/m²/d\n', mean(df.root_C_balance));
+fprintf('  Max imbalance: %.6f gC/m²/d\n', max(abs(df.root_C_balance)));
+
+if max(abs(df.root_C_balance)) > 1e-3
+    warning('Root C budget not conserved! E and S may be inconsistent.');
+end
+
+%% Visualize control coupling
+fig = figure('Position', [100 100 1400 600], 'Color', 'w');
+t = tiledlayout(2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
+
+% Panel 1: Controls over time
+ax1 = nexttile([1, 2]);
+yyaxis left
+plot(df.time, df.rootCSupply, 'LineWidth', 2, 'Color', [0.2 0.4 0.8]);
+ylabel('{\itS} [gC m^{-2} d^{-1}]');
+yyaxis right
+plot(df.time, df.root_exu, 'LineWidth', 2, 'Color', [0.8 0.4 0.2]);
+ylabel('{\itE} [gC m^{-2} d^{-1}]');
+title('(A) Control Variables Over Time');
+xlabel('Time [day]');
+grid on;
+
+
+% Panel 2: E vs S phase plot
+ax2 = nexttile;
+scatter(df.rootCSupply, df.root_exu, 40, df.time, 'filled');
+colorbar;
+xlabel('{\itS} [gC m^{-2} d^{-1}]');
+ylabel('{\itE} [gC m^{-2} d^{-1}]');
+title('(B) E vs. S (Color = Time)');
+grid on;
+
+% Panel 3: Root C allocation breakdown
+ax3 = nexttile([1, 2]);
+area(df.time, [df.root_growth_rate, df.root_exu, df.root_maintenance_resp], ...
+    'LineWidth', 1.5);
+hold on;
+plot(df.time, df.Net_rootC_assimilation, 'k--', 'LineWidth', 2, 'DisplayName', 'Net root C available');
+ylabel('[gC m^{-2} d^{-1}]');
+xlabel('Time [day]');
+legend('Root growth', 'Exudation', 'Maintenance', 'Available C', 'Location', 'best');
+title('(C) Root C Allocation Budget');
+grid on;
+
+% Panel 4: E/S ratio over time
+ax4 = nexttile;
+plot(df.time, df.root_exu ./ df.rootCSupply, 'LineWidth', 2, 'Color', [0.6 0.2 0.4]);
+ylabel('{\itE / S} [-]');
+xlabel('Time [day]');
+title('(D) Exudation as Fraction of Root C Supply');
+yline(0.4, '--r', 'Label', 'Typical max (~40%)');
+grid on;
+
