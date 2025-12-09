@@ -1,5 +1,5 @@
 # Optimality-Based Plant C-N Allocation Model
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.971859751.svg)](https://doi.org/10.5281/zenodo.15367433)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17872549.svg)](https://doi.org/10.5281/zenodo.17872549)
 
 This repository contains the codebase for simulating and visualizing plant responses to nitrogen (N) limitation via dynamic carbon (C) allocation strategies in plant–soil–microbe systems. The model supports the manuscript "Modelling belowground plant acclimation to low soil nitrogen – An eco-evolutionary approach" by Chakrawal et al., 2025.
 
