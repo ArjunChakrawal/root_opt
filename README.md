@@ -26,11 +26,11 @@ The optimal control framework provides a mechanistic, forward-looking alternativ
 root_opt/
 ├── figs/                                   # Output directory for generated figures
 │   ├── Figure2_revised.png                # Main allocation dynamics figure
-│   ├── Figure2_SI.png                     # Supplementary state variables
-│   ├── Figure2_N_uptake_controls.png      # N uptake controls figure
 │   ├── Figure3.png                        # Soil C:N and N availability effects
-│   ├── Figure4.png                        # Soil-plant trait interactions
-│   └── Figure5.png                        # Root N uptake capacity effects
+│   ├── Figure3_revised.png                # Revised version of Figure 3
+│   ├── Figure4_revised.png                # Soil-plant trait interactions
+│   ├── Figure5_revised.png                # Root N uptake capacity effects
+│   └── Figure6_revised.png                # Additional analysis figure
 │
 ├── tight_subplot/                         # Utility for subplot layout control
 │   ├── license.txt
@@ -42,10 +42,10 @@ root_opt/
 │   └── plotting.m                        # Diagnostic plotting utility
 │
 ├── Manuscript Figure Scripts
-│   ├── Figure2.m                         # Fig 2: Allocation strategies across scenarios
-│   ├── Figure_3_soilCN_soil_N.m         # Fig 3: Soil C:N × initial N matrix
-│   ├── Figure_4_soil_plant.m            # Fig 4: Soil × plant trait interactions
-│   └── Figure_5_soil_plant.m            # Fig 5: Root uptake capacity sensitivity
+│   ├── Figure2_and_3.m                   # Figures 2 & 3: Allocation strategies
+│   ├── Figure_4_soilCN_soil_N.m         # Figure 4: Soil C:N × initial N matrix
+│   ├── Figure_5_soil_plant.m            # Figure 5: Soil × plant trait interactions
+│   ├── Figure_6_soil_plant.m            # Figure 6: Root uptake capacity sensitivity
 │
 ├── Pre-computed Results (for reproducibility)
 │   ├── df_soilCN_inorgN_leafCN.mat      # Leaf C:N variation results
@@ -59,6 +59,7 @@ root_opt/
 │   └── casadi-windows-matlabR2016a-v3.5.5.zip  # CasADi dependency
 │
 ├── .gitignore                            # Excludes temporary/development files
+├── .github/                              # GitHub-specific files
 ├── LICENSE                               # MIT License
 └── README.md                             # This file
 ```
@@ -69,6 +70,7 @@ root_opt/
 - **`params_base_condition.m`**: Defines ~30 biological parameters (uptake rates, C:N ratios, turnover rates) and initial state conditions
 - **`Figure*.m`**: Self-contained scripts that run OCP scenarios and generate publication figures
 - **Pre-computed `.mat` files**: Store results from computationally intensive parameter sweeps (optional for quick figure regeneration)
+- **Diagnostic scripts**: Optional tools for understanding model behavior (not required for manuscript figures)
 ---
 ##  Getting Started
 
