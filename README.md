@@ -1,16 +1,22 @@
 # Optimality-Based Plant C-N Allocation Model
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.971859751.svg)](https://doi.org/10.5281/zenodo.15367433)
 
-This repository contains the codebase for simulating and visualizing plant responses to nitrogen (N) limitation via dynamic carbon (C) allocation strategies in plant–soil–microbe systems. The model supports the manuscript "Modelling belowground plant acclimation to low soil nitrogen – An eco-evolutionary approach" by  Chakrawal et al., 2025.
+This repository contains the codebase for simulating and visualizing plant responses to nitrogen (N) limitation via dynamic carbon (C) allocation strategies in plant–soil–microbe systems. The model supports the manuscript "Modelling belowground plant acclimation to low soil nitrogen – An eco-evolutionary approach" by Chakrawal et al., 2025.
 
 ## 🌱 Model Overview
-Plants must trade off C allocation between leaves, roots, and root exudates to forage for N under low availability. Our model captures these tradeoffs using an eco-evolutionary optimality framework that dynamically adapts C allocation strategies to maximize aboveground growth.
+Plants facing nitrogen limitation must dynamically allocate carbon between competing sinks—leaf growth, root growth, and root exudation—to maintain C:N homeostasis while maximizing fitness. Our model employs **optimal control theory** to determine time-dependent allocation strategies that maximize cumulative aboveground biomass over a growing season, subject to:
+
+- **Stoichiometric constraints**: Michaelis-Menten N uptake kinetics and fixed tissue C:N ratios
+- **Plant-soil-microbe coupling**: Exudation-driven priming of soil N mineralization
+- **Nested control structure**: Exudation as a fraction of net root C assimilation (biologically coupled)
+
+The optimal control framework provides a mechanistic, forward-looking alternative to fixed allocation rules, revealing emergent trade-offs between short-term substrate provision (exudation) and long-term capacity building (root growth) under N stress.
 
 **Key Features:**
-- Stoichiometrically constrained plant-microbe interactions
-- Dynamic C allocation between leaves, roots, and exudation
-- Optimization of plant growth under variable soil N availability
-- Integration of plant traits (e.g., root N uptake capacity, leaf/root C:N)
+- **9-state dynamical system**: Tracks C and N pools in leaves, roots, exudates, soil organic matter, and microbes
+- **2-control optimization**: Root C supply from leaves + exudation fraction (hierarchical structure)
+- **Physiological realism**: Enforces minimum allocation constraints and tissue stoichiometry
+- **Scenario analysis**: Tests responses to varying initial soil N, SOM C:N, and plant traits
 
 
 ---

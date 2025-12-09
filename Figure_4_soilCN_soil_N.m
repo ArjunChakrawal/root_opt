@@ -148,8 +148,8 @@ for i =1:length(ax)
     grid(ax(i),'on');
 end
 
-exportgraphics(gcf, "figs/Figure3.png", Resolution=600)
-print(gcf, 'figs/Figure3.svg', '-dsvg');
+% exportgraphics(gcf, "figs/Figure3.png", Resolution=600)
+% print(gcf, 'figs/Figure3.svg', '-dsvg');
 
 
 %%
@@ -271,7 +271,7 @@ for ii = 1:8
         'FontSize', 11);
 end
 
-exportgraphics(fig, "figs/Figure3_SI.png", "Resolution", 600);
+% exportgraphics(fig, "figs/Figure3_SI.png", "Resolution", 600);
 
 
 
@@ -457,7 +457,7 @@ set(ax([2,6]), 'Ylim',[0,0.5])
 
 set(ax([3,4,7,8]), 'Ylim',[0,1400]) 
 
-exportgraphics(gcf,"figs/Figure3_revised.png",Resolution=600)
+exportgraphics(gcf,"figs/Figure4_revised.png",Resolution=600)
 % print(gcf,'figs/Figure3.svg','-dsvg');
 
 

@@ -6,6 +6,9 @@
 # IPOPT solver output
 out.txt
 
+yop-master/
+casadi-windows-matlabR2016a-v3.5.5/
+
 # MATLAB data files (keep only manuscript-specific .mat files)
 *.mat
 !df_soilCN_inorgN_leafCN.mat
@@ -13,14 +16,7 @@ out.txt
 !df_soilCN_inorgN_Vmax_SOM.mat
 
 # Generated figures (can be regenerated from code)
-figs/*.png
-figs/*.svg
-figs/*.jpg
-figs/*.pdf
-figs/*.eps
-
-# Keep the figs directory structure
-!figs/.gitkeep
+figs/*
 
 # Diagnostic and development scripts (not in manuscript)
 diagnose_constraints_nested_ocp.m
@@ -36,5 +32,5 @@ Figure_reviewer_response.m
 # Documentation files (development only)
 LAGRANGE_MULTIPLIERS.md
 
-
 .github/
+.archive/

@@ -2,15 +2,15 @@
 clear all;
 clc
 close all
-%% varying soil properties: Vmax_IN_to_root and init_inorgN
+
+%% varying soil properties: CNleaf and init_inorgN
 terminal_time=120;
-df_soilCN_inorgN_Vmax_IN_to_root= struct();
+df_soilCN_inorgN_leafCN= struct();
 init_inorgN = [10, 20];
-CNSOM = [5,10,15,20,25,30]';
-CNSOM = (5:2.5:30)';
+CNSOM = [5,10,15,20,25,30]';CNSOM = (5:2.5:30)';
 
 numtstep=50;
-Vmax_IN_to_root = [3.7/15,3.7/5];
+CNleaf = [15,30];
 [params, state_init]=params_base_condition();
 
 root_col=[0.8350 0.3680 0.0000];  
@@ -18,16 +18,16 @@ exuflux_col = [0.0000 0.500 0.9];
 supply_col = [1 1 1]*0.3;
 leaf_col = [1 1 1]*0.5;
 %%
-for k =1:length(Vmax_IN_to_root)
+for k =1:length(CNleaf)
     for j= 1:length(init_inorgN)
         for i=1:length(CNSOM)
-            params.Vmax_IN_to_root= Vmax_IN_to_root(k);
+            params.CNleaf_opt= CNleaf(k);
             state_init.inorgN=init_inorgN(j);
             state_init.SOMN = state_init.SOMC / CNSOM(i); % gN/m2
             [df, sol,~,~] = solve_ocp_nested(terminal_time, state_init, params,numtstep, []);
-            fieldName = sprintf('df_Vmax_IN_to_root_%1.2f_Ni_%1.2f_SOMCN_%1.0f',Vmax_IN_to_root(k),init_inorgN(j),CNSOM(i));
+            fieldName = sprintf('df_CNleaf_%1.0f_Ni_%1.2f_SOMCN_%1.0f',CNleaf(k),init_inorgN(j),CNSOM(i));
             fieldName = strrep(fieldName, '.', '_');
-            df_soilCN_inorgN_Vmax_IN_to_root.(fieldName) = df;
+            df_soilCN_inorgN_leafCN.(fieldName) = df;
 %             Lines  = readlines('out.txt');
 %             exit_msg = Lines(32)
 %             fig=plotting(df,params,exit_msg);
@@ -36,17 +36,15 @@ for k =1:length(Vmax_IN_to_root)
         end
     end
 end
-
-save('df_soilCN_inorgN_Vmax_IN_to_root.mat', 'df_soilCN_inorgN_Vmax_IN_to_root')
+save('df_soilCN_inorgN_leafCN.mat', 'df_soilCN_inorgN_leafCN')
 
 %%
-load('df_soilCN_inorgN_Vmax_IN_to_root.mat')
+load('df_soilCN_inorgN_leafCN.mat', 'df_soilCN_inorgN_leafCN')
 
 title_font=13;
 fig=figure;fig.Color='w';
 fig.Position=[40,60,800,650];
 [ax, ~] = tight_subplot(2,2, [.075 .1],[.1 .075],[0.1 .02]);
-
 
 title(ax(1),"(A) Low min. N",'FontWeight','normal',FontSize=title_font);
 title(ax(2),"(B) Low min. N",'FontWeight','normal',FontSize=title_font);
@@ -70,6 +68,7 @@ text(ax(4), -0.15, 0.25, '{\it\intE / \intS} [-]', 'Units', 'normalized', ...
 ylabel(ax(1),'\int{\itS} / \int{\itA_{net}} [-]')
 ylabel(ax(3),'\int{\itS} / \int{\itA_{net}} [-]')
 
+
 final_tbl=table();
 w=1;
 numstr =["(A)","(B)","(C)","(D)"];
@@ -84,16 +83,17 @@ end
 
 
 for j= 1:length(init_inorgN)
-    for k =1:length(Vmax_IN_to_root)
+    for k =1:length(CNleaf)
         Cpartition=[];
         for i=1:length(CNSOM)
-            fieldName = sprintf('df_Vmax_IN_to_root_%1.2f_Ni_%1.2f_SOMCN_%1.0f',Vmax_IN_to_root(k),init_inorgN(j),CNSOM(i));
+            fieldName = sprintf('df_CNleaf_%1.0f_Ni_%1.2f_SOMCN_%1.0f',CNleaf(k),init_inorgN(j),CNSOM(i));
             fieldName = strrep(fieldName, '.', '_');
-            df=df_soilCN_inorgN_Vmax_IN_to_root.(fieldName);
+            df=df_soilCN_inorgN_leafCN.(fieldName);
             S_by_Anet = trapz(df.time,df.rootCSupply)/trapz(df.time,df.Anet);
             Gleaf_by_Anet = trapz(df.time,df.leaf_growth_rate)/trapz(df.time,df.Anet);
             Groot_by_Anet = trapz(df.time,df.root_growth_rate)/trapz(df.time,df.Anet);
             exu_by_Anet = trapz(df.time,df.root_exu)/trapz(df.time,df.Anet);
+
             Groot_by_S = trapz(df.time,df.root_growth_rate)/trapz(df.time,df.rootCSupply);
             exu_by_S = trapz(df.time,df.root_exu)/trapz(df.time,df.rootCSupply);
             Cpartition = [Cpartition;[S_by_Anet,Gleaf_by_Anet,Groot_by_Anet, exu_by_Anet, Groot_by_S,   exu_by_S]];
@@ -101,7 +101,7 @@ for j= 1:length(init_inorgN)
         tbl = array2table(Cpartition, "VariableNames",["S_by_Anet","Gleaf_by_Anet","Groot_by_Anet","exu_by_Anet","Gr_S","E_S"]);
         tbl.CNSOM=CNSOM;
         tbl.init_inorgN = repmat(init_inorgN(j), height(tbl), 1);
-        tbl.Vmax_IN_to_root = repmat(Vmax_IN_to_root(k), height(tbl), 1);
+        tbl.CNleaf = repmat(CNleaf(k), height(tbl), 1);
 
         final_tbl=[final_tbl;tbl];
 
@@ -109,7 +109,6 @@ for j= 1:length(init_inorgN)
             MarkerSize=msw, LineWidth=lw, Color=supply_col);
 %         plot(axgrid(j,1),tbl.CNSOM, tbl.Gleaf_by_Anet,LineStyle=ls(k), ...
 %             MarkerSize=msw, LineWidth=lw, Color=leaf_col);
-
         plot(axgrid(j,2),tbl.CNSOM, tbl.Gr_S,LineStyle=ls(k), ...
             MarkerSize=msw, LineWidth=lw, Color=root_col);
         plot(axgrid(j,2),tbl.CNSOM, tbl.E_S,LineStyle=ls(k), ...
@@ -127,7 +126,7 @@ for jj = 1:2
     p(jj) = plot(ax2, nan, nan, ls{jj}, 'LineWidth', 2, 'Color','k');
     hold(ax2, 'on')
 end
-hl = legend(ax2, p,  {'low root N uptake','high root N uptake'});
+hl = legend(ax2, p,  {'low leaf C:N','high leaf C:N'});
 hl.FontSize = 11;hl.Location="southwest";
 hl.Box = 'off';h1.Title.String="line color";
 hl.Color='w';hl.LineWidth=0.5;
@@ -136,11 +135,8 @@ ax2.Visible = 'off';
 
 % set(ax, 'Ylim',[0,0.4])
 set(ax([1,3]), 'Ylim',[0,0.9])
-set(ax([2,4]), 'Ylim',[0,0.45])
+set(ax([2,4]), 'Ylim',[0,0.4])
 
-% lh=legend(ax(1), {'\int{\itG_{root}} / \int{\itS}', '\int{\itE} / \int{\itS}'});
-% lh.Location="best";lh.FontSize=10;
-% lh.Box="on";lh.NumColumns=1;
 
 set(ax(1:2), 'Xticklabel',[])
 % set(ax([2,4]), 'Yticklabel',[])
@@ -155,8 +151,8 @@ for i =1:length(ax)
     grid(ax(i),'on');
 end
 
-exportgraphics(gcf, "figs/Figure5.png", Resolution=600)
-print(gcf, 'figs/Figure5.svg', '-dsvg');
+% exportgraphics(gcf, "figs/Figure4.png", Resolution=600)
+% print(gcf, 'figs/Figure4.svg', '-dsvg');
 
 %%
 title_font = 13;
@@ -165,9 +161,8 @@ fig.Color = 'w';
 fig.Position = [40, 60, 800, 800];
 
 % Variables
-varNames = ["Anet","S","Groot","exu"];
-
-ls = ["--","-"];      % Vmax_IN_to_root line style
+varNames = ["Anet","S","Groot","exu"]; 
+ls = ["--","-"];      % CNleaf line style
 
 % Create 4×2 grid
 [ax, ~] = tight_subplot(4, 2, [.07 .07], [.07 .05], [.09 .04]);
@@ -177,21 +172,17 @@ end
 
 final_tbl = table();
 
-% ------------------------------------------------------------
-% Main nested loops
-%   j → init_inorgN (column)
-%   k → Vmax_IN_to_root (linestyle)
-% ------------------------------------------------------------
+for j = 1:length(init_inorgN)      % column index
+    for k = 1:length(CNleaf)       % line style
 
-for j = 1:length(init_inorgN)
-    for k = 1:length(Vmax_IN_to_root)
-        Cpartition = [];
+        Cpart = nan(length(CNSOM),4);
+
         for i = 1:length(CNSOM)
-            fname = sprintf('df_Vmax_IN_to_root_%1.2f_Ni_%1.2f_SOMCN_%1.0f', ...
-                Vmax_IN_to_root(k), init_inorgN(j), CNSOM(i));
-            fname = strrep(fname, '.', '_');
+            fieldName = sprintf('df_CNleaf_%1.0f_Ni_%1.2f_SOMCN_%1.0f', ...
+                                 CNleaf(k), init_inorgN(j), CNSOM(i));
+            fieldName = strrep(fieldName, '.', '_');
 
-            df = df_soilCN_inorgN_Vmax_IN_to_root.(fname);
+            df = df_soilCN_inorgN_leafCN.(fieldName);
 
             A = trapz(df.time, df.Anet);
             S = trapz(df.time, df.rootCSupply);
@@ -204,7 +195,7 @@ for j = 1:length(init_inorgN)
         tbl = array2table(Cpart, "VariableNames", varNames);
         tbl.CNSOM = CNSOM(:);
         tbl.init_inorgN = repmat(init_inorgN(j), height(tbl), 1);
-        tbl.Vmax_IN_to_root = repmat(Vmax_IN_to_root(k), height(tbl), 1);
+        tbl.CNleaf = repmat(CNleaf(k), height(tbl), 1);
         final_tbl = [final_tbl; tbl];
 
         % Plot each variable in its row; columns = init_inorgN
@@ -223,18 +214,16 @@ for j = 1:length(init_inorgN)
     end
 end
 
-
 % Y-axis labels
 ylabel(ax(1), "\int{{\itA_{net}} [gC m^{-2}]}", 'FontSize', 13, Interpreter='tex');
 ylabel(ax(3), "\int{{\itS} [gC m^{-2}]}", 'FontSize', 13, Interpreter='tex');
 ylabel(ax(5), "\int{{\itG_{root}} [gC m^{-2}]}", 'FontSize', 13, Interpreter='tex');
 ylabel(ax(7), "\int{{\itE} [gC m^{-2}]}", 'FontSize', 13, Interpreter='tex');
 
-ylim(ax([1,2]),[600,1500])
-ylim(ax([3,4]),[400,850])
-ylim(ax([5,6]),[100,300])
-ylim(ax([7,8]),[0,120])
-
+ylim(ax([1,2]),[500,2000])
+ylim(ax([3,4]),[300,1500])
+ylim(ax([5,6]),[100,500])
+ylim(ax([7,8]),[0,200])
 % X-labels
 xlabel(ax(7), "SOM C:N ratio", 'FontSize', 13);
 xlabel(ax(8), "SOM C:N ratio", 'FontSize', 13);
@@ -251,8 +240,9 @@ hold(ax_leg,'on');
 p1 = plot(ax_leg, nan, nan, ls{1}, 'Color','k','LineWidth',2);
 p2 = plot(ax_leg, nan, nan, ls{2}, 'Color','k','LineWidth',2);
 
-hl = legend(ax_leg, [p1 p2], {'low root N uptake','high root N uptake'}, ...
+hl = legend(ax_leg, [p1 p2], {'low leaf C:N', 'high leaf C:N'}, ...
     'Location','northeast',"FontSize",11, "Box","off");
+
 
 ax_leg.Visible = 'off';
 
@@ -269,8 +259,9 @@ for ii = 1:8
         'FontSize', 11);
 end
 
-exportgraphics(fig, "figs/Figure5_SI.png", "Resolution", 600);
+% exportgraphics(fig, "figs/Figure4_SI.png", "Resolution", 600);
 %%
+
 close all
 
 title_font = 16;
@@ -292,25 +283,24 @@ for i=1:length(ax)
     axis(ax(i), 'tight')    
 end
 
-
 % Panel titles (row 1 = low N, row 2 = high N)
 title(ax(1), "(A) Low min. N",  'FontSize', title_font)
 title(ax(2), "(B) Low min. N",  'FontSize', title_font)
-title(ax(3), ["(C) Low min. N and", "{\it low} root N uptake"],  'FontSize', title_font)
-title(ax(4), ["(D) Low min. N and", "{\it high} root N uptake"],  'FontSize', title_font)
+title(ax(3), ["(C) Low min. N and", "{\it low} leaf C:N"],  'FontSize', title_font)
+title(ax(4), ["(D) Low min. N and", "{\it high} leaf C:N"],  'FontSize', title_font)
 
 title(ax(5), "(E) High min. N", 'FontSize', title_font)
 title(ax(6), "(F) High min. N", 'FontSize', title_font)
-title(ax(7), ["(G) High min. N and" ,"{\it low} root N uptake"], 'FontSize', title_font)
-title(ax(8), ["(H) High min. N and" ,"{\it high} root N uptake"], 'FontSize', title_font)
+title(ax(7), ["(G) High min. N and" ,"{\it low} leaf C:N"], 'FontSize', title_font)
+title(ax(8), ["(H) High min. N and" ,"{\it high} leaf C:N"], 'FontSize', title_font)
 
-ylabel(ax(1), '\int{\itS} / \int{\itA_{net}} [-]', 'FontSize', title_font)
-ylabel(ax(5), '\int{\itS} / \int{\itA_{net}} [-]', 'FontSize', title_font)
+ylabel(ax(1), '\int{\itS} / \int{\itA_{net}} [-]')
+ylabel(ax(5), '\int{\itS} / \int{\itA_{net}} [-]')
 xlabel(ax(5:8), "SOM C:N ratio")
 
-ylabel(ax(1),'\int{\itS} / \int{\itA_{net}} [-]', 'FontSize', title_font)
-ylabel(ax(5),'\int{\itS} / \int{\itA_{net}} [-]', 'FontSize', title_font)
-xlabel(ax(5:8),"SOM C:N ratio", 'FontSize', title_font)
+ylabel(ax(1),'\int{\itS} / \int{\itA_{net}} [-]')
+ylabel(ax(5),'\int{\itS} / \int{\itA_{net}} [-]')
+xlabel(ax(5:8),"SOM C:N ratio")
 
 
 text(ax(2),-0.2, 0.3+0.4, 'or \int{\itG_{R}} / \int{\itS} [-]', 'Units', 'normalized', ...
@@ -338,13 +328,13 @@ ls = ["--","-"]; lw=2;
 %=======================================================================
 % Storage to hold final leaf/root/exu vs CNSOM for stacked-area plots
 %=======================================================================
-leaf_final_low  = zeros(length(Vmax_IN_to_root), length(CNSOM));
-root_final_low  = zeros(length(Vmax_IN_to_root), length(CNSOM));
-exu_final_low   = zeros(length(Vmax_IN_to_root), length(CNSOM));
+leaf_final_low  = zeros(length(CNleaf), length(CNSOM));
+root_final_low  = zeros(length(CNleaf), length(CNSOM));
+exu_final_low   = zeros(length(CNleaf), length(CNSOM));
 
-leaf_final_high = zeros(length(Vmax_IN_to_root), length(CNSOM));
-root_final_high = zeros(length(Vmax_IN_to_root), length(CNSOM));
-exu_final_high  = zeros(length(Vmax_IN_to_root), length(CNSOM));
+leaf_final_high = zeros(length(CNleaf), length(CNSOM));
+root_final_high = zeros(length(CNleaf), length(CNSOM));
+exu_final_high  = zeros(length(CNleaf), length(CNSOM));
 
 
 
@@ -353,17 +343,18 @@ exu_final_high  = zeros(length(Vmax_IN_to_root), length(CNSOM));
 %=======================================================================
 for j = 1:length(init_inorgN)      % j=1 low N, j=2 high N
 
-    for k = 1:length(Vmax_IN_to_root)    % two Vmax
+    for k = 1:length(CNleaf)    % two Vmax
 
         Svals = []; GrSvals=[]; ESvals=[];
         leafF = []; rootF=[]; exuF=[];
 
         for i = 1:length(CNSOM)
 
-            fieldName = sprintf('df_Vmax_IN_to_root_%1.2f_Ni_%1.2f_SOMCN_%1.0f', ...
-                Vmax_IN_to_root(k),init_inorgN(j),CNSOM(i));
+            fieldName = sprintf('df_CNleaf_%1.0f_Ni_%1.2f_SOMCN_%1.0f', ...
+                                 CNleaf(k), init_inorgN(j), CNSOM(i));
             fieldName = strrep(fieldName, '.', '_');
-            df=df_soilCN_inorgN_Vmax_IN_to_root.(fieldName);
+
+            df = df_soilCN_inorgN_leafCN.(fieldName);
 
             Svals(end+1)   = trapz(df.time,df.rootCSupply)      / trapz(df.time,df.Anet);
             GrSvals(end+1) = trapz(df.time,df.root_growth_rate) / trapz(df.time,df.rootCSupply);
@@ -399,7 +390,7 @@ end
 %=======================================================================
 % STACKED AREA PLOTS vs CNSOM (col 3=Vmax1, col 4=Vmax2)
 %=======================================================================
-for k = 1:length(Vmax_IN_to_root)
+for k = 1:length(CNleaf)
 
     % Row 1: low N
     area(ax_low(2+k), CNSOM, ...
@@ -425,13 +416,13 @@ ax_leg = axes;
 ax_leg.Position = ax(1).Position;
 hold(ax_leg, 'on');
 
-p = gobjects(length(Vmax_IN_to_root),1);
-for k = 1:length(Vmax_IN_to_root)
+p = gobjects(length(CNleaf),1);
+for k = 1:length(CNleaf)
     p(k) = plot(ax_leg, nan, nan, ls(k), 'Color','k','LineWidth',2);
 end
 
-legend(ax_leg, p,  {'low root N uptake','high root N uptake'}, ...
-       "Location","southwest", "FontSize",14, "Box","off");
+legend(ax_leg, p,  {'low leaf C:N','high leaf C:N'}, ...
+       "Location","southwest", "FontSize",13, "Box","off");
 ax_leg.Visible = 'off';
 
 % -----------------------------
@@ -446,9 +437,10 @@ legend(ax_low(3),{'\int{\it G_{L}}','\int{\it G_{R}}','\int{\it E}'}, 'Location'
 %-----------------------------------------------------------------------
 
 set(ax(1:4), 'Xticklabel',[])
+
 set(ax([1,5]), 'Ylim',[0,1])
 set(ax([2,6]), 'Ylim',[0,0.5]) 
+
 set(ax([3,4,7,8]), 'Ylim',[0,1400]) 
 
 exportgraphics(gcf,"figs/Figure5_revised.png",Resolution=600)
-% print(gcf,'figs/Figure3.svg','-dsvg');

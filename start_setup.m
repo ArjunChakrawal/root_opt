@@ -32,10 +32,10 @@ end
 %% run test
 test_yop(true)
 %% run script to generate figure used in the manuscript
-Figure2
-Figure_3_soilCN_soil_N
-Figure_4_soil_plant
+Figure2_and_3
+Figure_4_soilCN_soil_N
 Figure_5_soil_plant
+Figure_6_soil_plant
 %%
 
 
