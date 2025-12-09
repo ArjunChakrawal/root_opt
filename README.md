@@ -22,33 +22,53 @@ The optimal control framework provides a mechanistic, forward-looking alternativ
 ---
 
 ## 📁 Repository Structure
-```sh
-└── root_opt/
-    └── figs/ # Output directory for figures
-        ├── Figure2.png
-        ├── Figure3.png
-        ├── Figure4.png
-        └── Figure5.png
-    ├── .gitattributes 
-    ├── casadi-windows-matlabR2016a-v3.5.5.zip
-    ├── df_soilCN_inorgN_leafCN.mat 
-    ├── df_soilCN_inorgN_Vmax_IN_to_root.mat 
-    ├── df_soilCN_inorgN_Vmax_SOM.mat 
-    ├── Figure2.m 
-    ├── Figure_3_soilCN_soil_N.m 
-    ├── Figure_4_soil_plant.m 
-    ├── Figure_5_soil_plant.m     
-    ├── LICENSE 
-    ├── out.txt 
-    ├── params_base_condition.m
-    ├── plotting.m 
-    ├── README.md 
-    ├── solve_ocp.m
-    ├── start_setup.m
-    ├── test_yop.m
-    └── yop-master.zip
-    
 ```
+root_opt/
+├── figs/                                   # Output directory for generated figures
+│   ├── Figure2_revised.png                # Main allocation dynamics figure
+│   ├── Figure2_SI.png                     # Supplementary state variables
+│   ├── Figure2_N_uptake_controls.png      # N uptake controls figure
+│   ├── Figure3.png                        # Soil C:N and N availability effects
+│   ├── Figure4.png                        # Soil-plant trait interactions
+│   └── Figure5.png                        # Root N uptake capacity effects
+│
+├── tight_subplot/                         # Utility for subplot layout control
+│   ├── license.txt
+│   └── tight_subplot.m
+│
+├── Core Model Files
+│   ├── solve_ocp_nested.m                # Main OCP solver (nested control structure)
+│   ├── params_base_condition.m           # Default parameter set and initial conditions
+│   └── plotting.m                        # Diagnostic plotting utility
+│
+├── Manuscript Figure Scripts
+│   ├── Figure2.m                         # Fig 2: Allocation strategies across scenarios
+│   ├── Figure_3_soilCN_soil_N.m         # Fig 3: Soil C:N × initial N matrix
+│   ├── Figure_4_soil_plant.m            # Fig 4: Soil × plant trait interactions
+│   └── Figure_5_soil_plant.m            # Fig 5: Root uptake capacity sensitivity
+│
+├── Pre-computed Results (for reproducibility)
+│   ├── df_soilCN_inorgN_leafCN.mat      # Leaf C:N variation results
+│   ├── df_soilCN_inorgN_Vmax_IN_to_root.mat  # Root uptake capacity results
+│   └── df_soilCN_inorgN_Vmax_SOM.mat    # SOM decomposition rate results
+│
+├── Setup and Dependencies
+│   ├── start_setup.m                     # Automated setup script (run first!)
+│   ├── test_yop.m                        # Yoptimization installation test
+│   ├── yop-master.zip                    # Archived Yoptimization package
+│   └── casadi-windows-matlabR2016a-v3.5.5.zip  # CasADi dependency
+│
+├── .gitignore                            # Excludes temporary/development files
+├── LICENSE                               # MIT License
+└── README.md                             # This file
+```
+
+### Key Files Explained
+
+- **`solve_ocp_nested.m`**: Core optimal control problem solver implementing the nested control structure (exudation as fraction of net root C)
+- **`params_base_condition.m`**: Defines ~30 biological parameters (uptake rates, C:N ratios, turnover rates) and initial state conditions
+- **`Figure*.m`**: Self-contained scripts that run OCP scenarios and generate publication figures
+- **Pre-computed `.mat` files**: Store results from computationally intensive parameter sweeps (optional for quick figure regeneration)
 ---
 ##  Getting Started
 
